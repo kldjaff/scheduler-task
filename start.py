@@ -21,7 +21,9 @@ if __name__ == "__main__":
     gen_api = GenApi(
         method=local_settings.METHOD,
         endpoint=local_settings.ENDPOINT,
-        header=local_settings.HEADER
+        headers=local_settings.HEADER,
+        payload=local_settings.PAYLOAD,
+        params=local_settings.PARAMS
     )
 
     if interval_unit == "second":
