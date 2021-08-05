@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
 
-    interval = os.getenv("SCHEDULE_INTERVAL")
+    interval = int(os.getenv("SCHEDULE_INTERVAL"))
     interval_unit = os.getenv("INTERVAL_UNIT")
     logging.info(f"Scheduled Job will be running every {interval} {interval_unit}s")
     gen_api = GenApi(
