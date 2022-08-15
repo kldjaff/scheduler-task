@@ -15,25 +15,27 @@ logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
 
-    interval = int(os.getenv("SCHEDULE_INTERVAL"))
-    interval_unit = os.getenv("INTERVAL_UNIT")
-    logging.info(f"Scheduled Job will be running every {interval} {interval_unit}s")
-    gen_api = GenApi(
-        method=local_settings.METHOD,
-        endpoint=local_settings.ENDPOINT,
-        headers=local_settings.HEADER,
-        payload=local_settings.PAYLOAD,
-        params=local_settings.PARAMS
-    )
+    # 管理多个api
+    for task in local_settings.TASKS:
+        interval = int(task.get('SCHEDULE_INTERVAL'))
+        interval_unit = task.get('INTERVAL_UNIT')
+        logging.info(f"Scheduled Job will be running every {interval} {interval_unit}s")
+        gen_api = GenApi(
+            method=task.get('METHOD'),
+            endpoint=task.get('ENDPOINT'),
+            headers=task.get('HEADER'),
+            payload=task.get('PAYLOAD'),
+            params=task.get('PARAMS')
+        )
 
-    if interval_unit == "second":
-        schedule.every(interval).seconds.do(gen_api.run)
-    elif interval_unit == "hour":
-        schedule.every(interval).hours.do(gen_api.run)
-    elif interval_unit == "day":
-        schedule.every(interval).days.do(gen_api.run)
-    else:
-        schedule.every(1).seconds.do(gen_api.run)
+        if interval_unit == "second":
+            schedule.every(interval).seconds.do(gen_api.run)
+        elif interval_unit == "hour":
+            schedule.every(interval).hours.do(gen_api.run)
+        elif interval_unit == "day":
+            schedule.every(interval).days.do(gen_api.run)
+        else:
+            schedule.every(1).seconds.do(gen_api.run)
 
-    while True:
-        schedule.run_pending()
+        while True:
+            schedule.run_pending()
