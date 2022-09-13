@@ -1,9 +1,9 @@
 # coding=utf-8
 TASKS = [
     {
-        'INTERVAL_UNIT': 'day',
-        'SCHEDULE_INTERVAL': 1,
-        'ENDPOINT' : "http://192.168.100.5/xxx/push",
+        'INTERVAL_UNIT': 'second',
+        'SCHEDULE_INTERVAL': 10,
+        'ENDPOINT' : "http://localhost:5000/hello",
         'METHOD' : "GET",
         'HEADER' : {
             'Content-Type': "application/json",
@@ -13,9 +13,9 @@ TASKS = [
         'PARAMS' : {}
     },
     {
-        'INTERVAL_UNIT': 'day',
-        'SCHEDULE_INTERVAL': 3,
-        'ENDPOINT' : "http://192.168.100.5/xxx/pull",
+        'INTERVAL_UNIT': 'second',
+        'SCHEDULE_INTERVAL': 5,
+        'ENDPOINT' : "http://localhost:5001/hello2",
         'METHOD' : "GET",
         'HEADER' : {
             'Content-Type': "application/json",
@@ -25,9 +25,9 @@ TASKS = [
         'PARAMS' : {}
     },
     {
-        'INTERVAL_UNIT': 'day',
-        'SCHEDULE_INTERVAL': 1,
-        'ENDPOINT': "http://192.168.100.5/xxx/import/format",
+        'INTERVAL_UNIT': 'second',
+        'SCHEDULE_INTERVAL': 5,
+        'ENDPOINT': "http://localhost:5001/hello3",
         'METHOD': "GET",
         'HEADER': {
             'Content-Type': "application/json",
@@ -35,29 +35,5 @@ TASKS = [
         },
         'PAYLOAD': {},
         'PARAMS': {}
-    },
-    {
-        'INTERVAL_UNIT': 'day',
-        'SCHEDULE_INTERVAL': 1,
-        'ENDPOINT': "http://192.168.100.5/xxx/import/data",
-        'METHOD': "GET",
-        'HEADER': {
-            'Content-Type': "application/json",
-            'cache-control': "no-cache"
-        },
-        'PAYLOAD': {},
-        'PARAMS': {}
-    },
-    {
-        'INTERVAL_UNIT': 'day',
-        'SCHEDULE_INTERVAL': 1,
-        'ENDPOINT': "http://192.168.100.5/xxx/cleanup",
-        'METHOD': "GET",
-        'HEADER': {
-            'Content-Type': "application/json",
-            'cache-control': "no-cache"
-        },
-        'PAYLOAD': {},
-        'PARAMS': {}
-    },
+    }
 ]
