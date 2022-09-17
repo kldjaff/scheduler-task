@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 import schedule
-import os
 import logging
 
 import local_settings
@@ -53,9 +52,12 @@ if __name__ == "__main__":
             payload=task.get('PAYLOAD'),
             params=task.get('PARAMS')
         )
+
         sc = schedule.Scheduler()
         if interval_unit == 'second':
             sc.every(interval).seconds.do(gen_api.run)
+        elif interval_unit == 'minute':
+            sc.every(interval).minutes.do(gen_api.run)
         elif interval_unit == 'hour':
             sc.every(interval).hours.do(gen_api.run)
         elif interval_unit == 'day':
@@ -75,5 +77,7 @@ if __name__ == "__main__":
             except Exception as ex:
                 logging.error(ex)
 
-        time.sleep(60 * 60)
-        # None 'secondly' task is serious, let the outer loop take a nap every 60 * 60 seconds.
+        time.sleep(60 * 10)
+        # None 'secondly' task is serious
+        # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
+        # On development, take a nap every 60 * 10 seconds. (10 minutes)
