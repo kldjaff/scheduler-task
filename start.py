@@ -30,16 +30,15 @@ if __name__ == "__main__":
     Limitations:
     (1) all schedulers will run in serial, a later scheduler will NOT be activated until the former scheduler has finished its job. 
         For example,
-            If the 1st scheduler runs every 10 seconds and the 2nd one runs every 5 seconds, 
-            it will be impossible to activate the 2nd scheduler on time. 
+            Assume that the 1st scheduler runs every 10 seconds (and it lasts 20 seconds) 
+                        the 2nd scheduler runs every 5 seconds, 
+            Then the 2nd scheduler will always be activated on the 31th second.
         
         For now, API response time ie not expected to exceed several minutes.                  
         As long as local_settings.py is carefully prepared, this solution is acceptable.
         
     (2) 'secondly' tasks are left only for debugging, not for release        
     """
-
-    # logging.info(local_settings.TASKS)
 
     scheduler_ = []
     for task in local_settings.TASKS:
@@ -77,7 +76,6 @@ if __name__ == "__main__":
             except Exception as ex:
                 logging.error(ex)
 
-        time.sleep(60 * 10)
-        # None 'secondly' task is serious
+        time.sleep(60 * 60)
         # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
-        # On development, take a nap every 60 * 10 seconds. (10 minutes)
+        # For debugging, take a nap every 60 * 10 seconds. (10 minutes)
