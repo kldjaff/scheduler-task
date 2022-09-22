@@ -41,6 +41,7 @@ if __name__ == "__main__":
     """
 
     scheduler_ = []
+    job_title_ = []
     for task in local_settings.TASKS:
         interval = int(task.get('SCHEDULE_INTERVAL'))
         interval_unit = task.get('INTERVAL_UNIT')
@@ -49,6 +50,7 @@ if __name__ == "__main__":
             endpoint=task.get('ENDPOINT'),
             headers=task.get('HEADER'),
             payload=task.get('PAYLOAD'),
+            payload_json=task.get('PAYLOAD_JSON'),
             params=task.get('PARAMS')
         )
 
@@ -65,17 +67,22 @@ if __name__ == "__main__":
             logging.error(f"unrecognized interval_unit -- {interval_unit}")
             exit(1)
 
-        logging.info(f"Scheduled Job will be running every {interval} {interval_unit}s")
+        job_title = task.get('title', '')
+        logging.info(f"Scheduled Job {job_title} will be running every {interval} {interval_unit}s")
+        job_title_.append(job_title)
         scheduler_.append(sc)
 
+    n_jobs = len(scheduler_)
     while True:
-        for sc in scheduler_:
+        for i in range(n_jobs):
             try:
+                sc = scheduler_[i]
+                logging.info(f"{job_title_[i]}  - {sc.get_jobs()}")
                 sc.run_pending()
-                logging.info(sc.get_jobs())
             except Exception as ex:
                 logging.error(ex)
 
-        time.sleep(60 * 60)
+        logging.info('snoring...')
+        time.sleep(60 * 0.5)
         # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
         # For debugging, take a nap every 60 * 10 seconds. (10 minutes)

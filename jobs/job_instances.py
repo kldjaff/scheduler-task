@@ -35,6 +35,10 @@ class GenApi(object):
             payload = self.dict_params['payload']
         else:
             payload = ""
+        if "payload_json" in self.dict_params.keys():
+            payload_json = self.dict_params['payload_json']
+        else:
+            payload_json = ""
         if "headers" in self.dict_params.keys():
             headers = self.dict_params['headers']
         else:
@@ -44,7 +48,10 @@ class GenApi(object):
         else:
             params = ""
 
-        response = self.s.request(self.method, self.end_point, data=payload, headers=headers, params=params)
+        if payload_json == "":
+            response = self.s.request(self.method, self.end_point, data=payload, headers=headers, params=params)
+        else:
+            response = self.s.request(self.method, self.end_point, json=payload_json, headers=headers, params=params)
         logging.info(f"{response.text}")
 
 
