@@ -68,8 +68,8 @@ if __name__ == "__main__":
             exit(1)
 
         job_title = task.get('title', '')
-        logging.info(f"Scheduled Job {job_title} will be running every {interval} {interval_unit}s")
         job_title_.append(job_title)
+        logging.info(f"Scheduled Job {job_title} will be running every {interval} {interval_unit}s")
         scheduler_.append(sc)
 
     n_jobs = len(scheduler_)
@@ -83,6 +83,6 @@ if __name__ == "__main__":
                 logging.error(ex)
 
         logging.info('snoring...')
-        time.sleep(60 * 0.5)
+        time.sleep(60 * 60)
         # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
         # For debugging, take a nap every 60 * 10 seconds. (10 minutes)
