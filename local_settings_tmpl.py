@@ -7,7 +7,7 @@ TASKS = [
         'ENDPOINT': "http://localhost/download",
         'METHOD': "GET",
         'HEADER': {
-            'Content-Type': "application/x-www-form-urlencoded",
+            'Content-Type': "application/x-www-form-urlencoded", # "application/json"
             'cache-control': "no-cache"
         },
         'PARAMS': {'limit':10}
