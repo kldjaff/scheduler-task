@@ -63,6 +63,8 @@ if __name__ == "__main__":
             sc.every(interval).hours.do(gen_api.run)
         elif interval_unit == 'day':
             sc.every(interval).days.do(gen_api.run)
+        elif interval_unit == 'week':
+            sc.every(interval).weeks.do(gen_api.run)
         else:
             logging.error(f"unrecognized interval_unit -- {interval_unit}")
             exit(1)
@@ -83,6 +85,6 @@ if __name__ == "__main__":
                 logging.error(ex)
 
         logging.info('snoring...')
-        time.sleep(60 * 60)
+        time.sleep(60 * 10)
         # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
         # For debugging, take a nap every 60 * 10 seconds. (10 minutes)
