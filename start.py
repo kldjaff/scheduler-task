@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 import schedule
-import os
 import logging
 
 import local_settings
@@ -31,8 +30,9 @@ if __name__ == "__main__":
     Limitations:
     (1) all schedulers will run in serial, a later scheduler will NOT be activated until the former scheduler has finished its job. 
         For example,
-            If the 1st scheduler runs every 10 seconds and the 2nd one runs every 5 seconds, 
-            it will be impossible to activate the 2nd scheduler on time. 
+            Assume that the 1st scheduler runs every 10 seconds (and it lasts 20 seconds) 
+                        the 2nd scheduler runs every 5 seconds, 
+            Then the 2nd scheduler will always be activated on the 31th second.
         
         For now, API response time ie not expected to exceed several minutes.                  
         As long as local_settings.py is carefully prepared, this solution is acceptable.
@@ -40,9 +40,8 @@ if __name__ == "__main__":
     (2) 'secondly' tasks are left only for debugging, not for release        
     """
 
-    # logging.info(local_settings.TASKS)
-
     scheduler_ = []
+    job_title_ = []
     for task in local_settings.TASKS:
         interval = int(task.get('SCHEDULE_INTERVAL'))
         interval_unit = task.get('INTERVAL_UNIT')
@@ -51,29 +50,41 @@ if __name__ == "__main__":
             endpoint=task.get('ENDPOINT'),
             headers=task.get('HEADER'),
             payload=task.get('PAYLOAD'),
+            payload_json=task.get('PAYLOAD_JSON'),
             params=task.get('PARAMS')
         )
+
         sc = schedule.Scheduler()
         if interval_unit == 'second':
             sc.every(interval).seconds.do(gen_api.run)
+        elif interval_unit == 'minute':
+            sc.every(interval).minutes.do(gen_api.run)
         elif interval_unit == 'hour':
             sc.every(interval).hours.do(gen_api.run)
         elif interval_unit == 'day':
             sc.every(interval).days.do(gen_api.run)
+        elif interval_unit == 'week':
+            sc.every(interval).weeks.do(gen_api.run)
         else:
             logging.error(f"unrecognized interval_unit -- {interval_unit}")
             exit(1)
 
-        logging.info(f"Scheduled Job will be running every {interval} {interval_unit}s")
+        job_title = task.get('title', '')
+        job_title_.append(job_title)
+        logging.info(f"Scheduled Job {job_title} will be running every {interval} {interval_unit}s")
         scheduler_.append(sc)
 
+    n_jobs = len(scheduler_)
     while True:
-        for sc in scheduler_:
+        for i in range(n_jobs):
             try:
+                sc = scheduler_[i]
+                logging.info(f"{job_title_[i]}  - {sc.get_jobs()}")
                 sc.run_pending()
-                logging.info(sc.get_jobs())
             except Exception as ex:
                 logging.error(ex)
 
-        time.sleep(60 * 60)
-        # None 'secondly' task is serious, let the outer loop take a nap every 60 * 60 seconds.
+        logging.info('snoring...')
+        time.sleep(60 * 10)
+        # On production, let the outer loop take a nap every 60 * 60 seconds. (1 hour)
+        # For debugging, take a nap every 60 * 10 seconds. (10 minutes)
